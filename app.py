@@ -31,7 +31,8 @@ grouped = filtered.group_by(["title", "url", "price"]).agg(
 
 # Prepare display DataFrame
 display_df = grouped.select([
-    pl.concat_str([pl.col("title"), pl.lit(" ("), pl.col("price"), pl.lit(")")]).alias("Product"),
+    pl.col("title").alias("Product"),
+    pl.col("price").alias("Price"),
     pl.col("colours").list.join(", ").alias("Colours"),
     pl.col("url").alias("Link")
 ])
@@ -41,7 +42,7 @@ st.subheader(f"Found {len(grouped)} products")
 st.dataframe(
     display_df,
     column_config={
-        "Link": st.column_config.LinkColumn("Product Link")
+        "Link": st.column_config.LinkColumn("Product Link", display_text="link")
     },
     hide_index=True,
 )
