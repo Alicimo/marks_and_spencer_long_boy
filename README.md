@@ -25,9 +25,7 @@ cd ms-product-explorer
 
 2. Install dependencies using `uv`:
 ```bash
-uv venv
-source .venv/bin/activate
-uv pip install -r requirements.txt
+uv sync
 ```
 
 ## Usage
@@ -45,4 +43,3 @@ streamlit run app.py
 - `main.py`: Scrapes product data from Marks & Spencer
 - `app.py`: Provides interactive product exploration interface
 - `product_details.csv`: Output of scraper (input for application)
-- `requirements.txt`: Python dependencies
