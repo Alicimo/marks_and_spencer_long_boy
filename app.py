@@ -6,17 +6,8 @@ st.title("M&S Product Explorer")
 # Load data
 df = pl.read_csv("product_details.csv")
 
-# Parse list columns from string to actual lists
-df = df.with_columns(
-    pl.col("sizes").str.json_decode(),
-    pl.col("in_stock").str.json_decode(),
-)
-
-# Explode the lists so each row has one size and its in_stock status
-exploded = df.explode(["sizes", "in_stock"])
-
 # Filter only in-stock items
-in_stock = exploded.filter(pl.col("in_stock"))
+in_stock = df.filter(pl.col("in_stock"))
 
 # Get unique sizes and colours for filters
 all_sizes = in_stock["sizes"].unique().sort().to_list()
