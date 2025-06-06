@@ -29,10 +29,19 @@ grouped = filtered.group_by(["title", "url", "price"]).agg(
     pl.col("colour").unique().sort().alias("colours")
 )
 
+# Prepare display DataFrame
+display_df = grouped.select([
+    pl.concat_str([pl.col("title"), pl.lit(" ("), pl.col("price"), pl.lit(")")]).alias("Product"),
+    pl.col("colours").list.join(", ").alias("Colours"),
+    pl.col("url").alias("Link")
+])
+
 # Display results
 st.subheader(f"Found {len(grouped)} products")
-for i, row in enumerate(grouped.iter_rows(named=True), 1):
-    st.markdown(f"**{i}: {row['title']} ({row['price']})**")
-    st.markdown(f"Colours: {', '.join(row['colours'])}")
-    st.markdown(f"[Product Link]({row['url']})")
-    st.divider()
+st.dataframe(
+    display_df,
+    column_config={
+        "Link": st.column_config.LinkColumn("Product Link")
+    },
+    hide_index=True,
+)
