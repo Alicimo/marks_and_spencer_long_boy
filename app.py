@@ -9,16 +9,24 @@ df = pl.read_csv("product_details.csv")
 # Filter only in-stock items
 in_stock = df.filter(pl.col("in_stock"))
 
-# Get unique sizes and colours for filters
-all_sizes = in_stock["sizes"].unique().sort().to_list()
-all_colours = in_stock["colour"].unique().sort().to_list()
+# Add text search
+search_text = st.text_input("Search by product title")
+text_filtered = in_stock
+if search_text:
+    text_filtered = text_filtered.filter(
+        pl.col("title").str.to_lowercase().str.contains(search_text.lower())
+    )
+
+# Get unique sizes and colours for filters from the text-filtered set
+all_sizes = text_filtered["sizes"].unique().sort().to_list()
+all_colours = text_filtered["colour"].unique().sort().to_list()
 
 # Create filters
 selected_sizes = st.multiselect("Filter by sizes", all_sizes)
 selected_colours = st.multiselect("Filter by colours", all_colours)
 
 # Apply filters
-filtered = in_stock
+filtered = text_filtered
 if selected_sizes:
     filtered = filtered.filter(pl.col("sizes").is_in(selected_sizes))
 if selected_colours:
